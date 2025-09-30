@@ -2,6 +2,7 @@ class PawsAndPreferences {
     constructor() {
         this.cats = [];
         this.likedCats = [];
+        this.dislikedCats = [];
         this.currentCatIndex = 0;
         this.totalCats = 15;
         this.isLoading = false;
@@ -356,6 +357,8 @@ class PawsAndPreferences {
     handleDislike() {
         console.log(`👎 Disliked cat ${this.currentCatIndex + 1}`);
         
+        const currentCat = this.cats[this.currentCatIndex];
+        this.dislikedCats.push(currentCat);
         this.animateCard('disliked');
         this.nextCat();
     }
@@ -394,10 +397,12 @@ class PawsAndPreferences {
         const currentCatEl = document.getElementById('currentCat');
         const totalCatsEl = document.getElementById('totalCats');
         const likesCountEl = document.getElementById('likesCount');
+        const dislikesCountEl = document.getElementById('dislikesCount');
         
         if (currentCatEl) currentCatEl.textContent = this.currentCatIndex + 1;
         if (totalCatsEl) totalCatsEl.textContent = this.totalCats;
         if (likesCountEl) likesCountEl.textContent = this.likedCats.length;
+        if (dislikesCountEl) dislikesCountEl.textContent = this.dislikedCats.length;
     }
 
     showResults() {
@@ -472,6 +477,7 @@ class PawsAndPreferences {
         
         this.currentCatIndex = 0;
         this.likedCats = [];
+        this.dislikedCats = [];
         this.cats = [];
         
         const resultsScreen = document.getElementById('resultsScreen');
