@@ -146,6 +146,12 @@ class PawsAndPreferences {
         console.log('🎮 Starting game...');
         console.log(`📊 Cats loaded: ${this.cats.length}, Current index: ${this.currentCatIndex}`);
         
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        
+        if (welcomeScreen) welcomeScreen.classList.add('hidden');
+        if (gameScreen) gameScreen.classList.remove('hidden');
+        
         if (this.cats.length === 0) {
             console.warn('⚠️ No cats loaded yet, waiting...');
             this.showLoading(true);
@@ -163,12 +169,6 @@ class PawsAndPreferences {
     }
     
     startGameAfterLoad() {
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        
-        if (welcomeScreen) welcomeScreen.classList.add('hidden');
-        if (gameScreen) gameScreen.classList.remove('hidden');
-        
         setTimeout(() => {
             this.createCardStack();
             this.updateProgress();
@@ -218,9 +218,13 @@ class PawsAndPreferences {
         img.src = cat.url;
         img.alt = `Adorable cat waiting for your preference - Image ${cat.id + 1}`;
         img.className = 'w-full h-full object-cover';
-        img.loading = 'lazy';
+        img.loading = stackIndex === 0 ? 'eager' : 'lazy';
 
-        card.classList.add('loading-placeholder');
+        if (stackIndex === 0) {
+            card.style.backgroundColor = '#ffffff';
+        } else {
+            card.classList.add('loading-placeholder');
+        }
 
         img.addEventListener('load', () => {
             card.classList.remove('loading-placeholder');
@@ -232,6 +236,14 @@ class PawsAndPreferences {
             this.setFallbackImage(img);
             card.classList.remove('loading-placeholder');
         });
+
+        if (stackIndex === 0) {
+            setTimeout(() => {
+                if (card.classList.contains('loading-placeholder')) {
+                    card.classList.remove('loading-placeholder');
+                }
+            }, 1000);
+        }
 
         card.appendChild(img);
         return card;
