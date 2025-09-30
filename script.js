@@ -144,24 +144,50 @@ class PawsAndPreferences {
 
     startGame() {
         console.log('🎮 Starting game...');
+        console.log(`📊 Cats loaded: ${this.cats.length}, Current index: ${this.currentCatIndex}`);
         
+        if (this.cats.length === 0) {
+            console.warn('⚠️ No cats loaded yet, waiting...');
+            this.showLoading(true);
+            const checkCats = setInterval(() => {
+                if (this.cats.length > 0) {
+                    clearInterval(checkCats);
+                    this.showLoading(false);
+                    this.startGameAfterLoad();
+                }
+            }, 100);
+            return;
+        }
+        
+        this.startGameAfterLoad();
+    }
+    
+    startGameAfterLoad() {
         const welcomeScreen = document.getElementById('welcomeScreen');
         const gameScreen = document.getElementById('gameScreen');
         
         if (welcomeScreen) welcomeScreen.classList.add('hidden');
         if (gameScreen) gameScreen.classList.remove('hidden');
         
-        this.createCardStack();
-        this.updateProgress();
+        setTimeout(() => {
+            this.createCardStack();
+            this.updateProgress();
+        }, 100);
     }
 
     createCardStack() {
         const container = document.getElementById('cardContainer');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ Card container not found!');
+            return;
+        }
+        
+        console.log(`🃏 Creating card stack - Current index: ${this.currentCatIndex}, Total cats: ${this.cats.length}`);
         
         container.innerHTML = '';
 
         const cardsToShow = Math.min(3, this.cats.length - this.currentCatIndex);
+        console.log(`📋 Cards to show: ${cardsToShow}`);
         
         for (let i = 0; i < cardsToShow; i++) {
             const catIndex = this.currentCatIndex + i;
@@ -169,10 +195,16 @@ class PawsAndPreferences {
             
             const card = this.createCard(this.cats[catIndex], i);
             container.appendChild(card);
+            console.log(`✅ Added card ${i + 1} for cat ${catIndex + 1}`);
         }
 
+        console.log(`🎴 Total cards in container: ${container.children.length}`);
+        
         if (container.children.length > 0) {
             this.addSwipeListeners(container.children[0]);
+            console.log('👆 Added swipe listeners to first card');
+        } else {
+            console.warn('⚠️ No cards were created!');
         }
     }
 
